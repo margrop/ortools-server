@@ -12,11 +12,22 @@ public class NativeLibLoader {
     private static final Logger logger = LoggerFactory.getLogger(NativeLibLoader.class);
 
     public static void load(String src, String snk) {
+        String currentOS = System.getProperty("os.name");
+        if (currentOS.contains("Windows") && snk.endsWith("dll")) {
+            loadFile(src, snk);
+        } else if (currentOS.contains("Linux") && snk.endsWith("so")) {
+            loadFile(src, snk);
+        } else {
+            logger.info("NativeLibLoader : unknown");
+        }
+    }
+
+    public static void loadFile(String src, String snk) {
         try {
             File file = copyResourceToTempDirFile(src, snk);
-            System.load(file.getAbsolutePath());
-            logger.info("NativeLibLoader : load " + snk + " successful");
-
+            String filePath = file.getAbsolutePath();
+            System.load(filePath);
+            logger.info("NativeLibLoader : load " + filePath + " successful");
         } catch (IOException e) {
             e.printStackTrace();
         }
