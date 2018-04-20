@@ -18,7 +18,7 @@ public class NativeLibLoader {
             linuxPrefix(new String[]{"dir"});
             loadFile(snk);
         } else if (currentOS.contains("Linux") && snk.endsWith("so")) {
-            String linuxPrefix = linuxPrefix(new String[]{"/bin/bash", "-c cat /etc/*-release"});
+            String linuxPrefix = linuxPrefix(new String[]{"/bin/bash", "-c", "cat /etc/*-release"});
             loadFile(linuxPrefix + "-" + snk);
         } else {
             logger.info("NativeLibLoader : not supported " + currentOS);
