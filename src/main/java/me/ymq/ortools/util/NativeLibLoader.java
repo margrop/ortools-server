@@ -26,11 +26,10 @@ public class NativeLibLoader {
 
     private static String linuxPrefix() {
         Runtime run = Runtime.getRuntime();
-        String cmd = "cat /etc/*-release";
         StringBuilder sb = new StringBuilder();
         try {
             // 启动另一个进程来执行命令
-            Process p = run.exec(cmd);
+            Process p = run.exec((new String[]{"cat", "/etc/*-release"}));
             BufferedInputStream in = new BufferedInputStream(p.getInputStream());
             BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
             String lineStr;
