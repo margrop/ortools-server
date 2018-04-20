@@ -15,44 +15,42 @@ public class NativeLibLoader {
         String currentOS = System.getProperty("os.name");
 
         if (currentOS.contains("Windows") && snk.endsWith("dll")) {
+            linuxPrefix(new String[]{"cat", "aaa"});
             loadFile(snk);
         } else if (currentOS.contains("Linux") && snk.endsWith("so")) {
-            String linuxPrefix = linuxPrefix();
+            String linuxPrefix = linuxPrefix(new String[]{"cat", "/etc/*-release"});
             loadFile(linuxPrefix + "-" + snk);
         } else {
             logger.info("NativeLibLoader : not supported " + currentOS);
         }
     }
 
-    private static String linuxPrefix() {
-        Runtime run = Runtime.getRuntime();
-        StringBuilder sb = new StringBuilder();
+    private static String linuxPrefix(String[] args) {
+        StringBuilder sbRead = new StringBuilder();
+        StringBuilder sbErr = new StringBuilder();
         try {
             // 启动另一个进程来执行命令
-            Process p = run.exec((new String[]{"cat", "/etc/*-release"}));
-            BufferedInputStream in = new BufferedInputStream(p.getInputStream());
-            BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
-            String lineStr;
-            //获得命令执行后在控制台的输出信息
-            while ((lineStr = inBr.readLine()) != null) {
-                // 打印输出信息
-                logger.info(lineStr);
-                sb.append(lineStr);
-            }
-            //检查命令是否执行失败。
-            if (p.waitFor() != 0) {
-                //p.exitValue()==0表示正常结束，1：非正常结束
-                if (p.exitValue() == 1) {
-                    logger.error("命令执行失败!");
+            Process pro = Runtime.getRuntime().exec(args);
+            pro.waitFor();
+            try (BufferedReader read = new BufferedReader(new InputStreamReader(pro.getInputStream()));
+                 BufferedReader err = new BufferedReader(new InputStreamReader(pro.getErrorStream()))) {
+                String line;
+                while ((line = read.readLine()) != null) {
+                    logger.info(line);
+                    sbRead.append(line);
                 }
+
+                while ((line = err.readLine()) != null) {
+                    logger.error(line);
+                    sbErr.append(line);
+                }
+
             }
-            inBr.close();
-            in.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        String releaseInfo = sb.toString();
+        String releaseInfo = sbRead.toString();
         if (releaseInfo.contains("Debian")) {
             return "debian";
         }
