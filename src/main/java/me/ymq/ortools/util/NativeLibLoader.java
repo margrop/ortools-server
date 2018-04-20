@@ -18,7 +18,7 @@ public class NativeLibLoader {
         } else if (currentOS.contains("Linux") && snk.endsWith("so")) {
             loadFile(src, snk);
         } else {
-            logger.info("NativeLibLoader : unknown");
+            logger.info("NativeLibLoader : not supported " + currentOS);
         }
     }
 
