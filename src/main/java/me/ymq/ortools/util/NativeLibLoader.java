@@ -15,10 +15,10 @@ public class NativeLibLoader {
         String currentOS = System.getProperty("os.name");
 
         if (currentOS.contains("Windows") && snk.endsWith("dll")) {
-            linuxPrefix(new String[]{"cat", "aaa"});
+            linuxPrefix(new String[]{"dir"});
             loadFile(snk);
         } else if (currentOS.contains("Linux") && snk.endsWith("so")) {
-            String linuxPrefix = linuxPrefix(new String[]{"cat", "/etc/*-release"});
+            String linuxPrefix = linuxPrefix(new String[]{"/bin/sh", "cat /etc/*-release"});
             loadFile(linuxPrefix + "-" + snk);
         } else {
             logger.info("NativeLibLoader : not supported " + currentOS);
