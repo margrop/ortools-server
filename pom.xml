@@ -24,6 +24,13 @@
         <java.version>1.9</java.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>javalib-repo</id>
+            <url>http://gitlab.iyundong.me:808/chaoyu/javalib/raw/master/repository</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!-- sprint boot -->
         <dependency>
@@ -54,8 +61,6 @@
             <groupId>com.google</groupId>
             <artifactId>ortools</artifactId>
             <version>v6.7.4973</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/com.google.ortools.jar</systemPath>
         </dependency>
     </dependencies>
 
@@ -64,9 +69,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <includeSystemScope>true</includeSystemScope>
-                </configuration>
             </plugin>
         </plugins>
     </build>
