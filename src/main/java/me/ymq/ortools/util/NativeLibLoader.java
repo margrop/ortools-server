@@ -16,10 +16,10 @@ public class NativeLibLoader {
 
         if (currentOS.contains("Windows") && snk.endsWith("dll")) {
             linuxPrefix(new String[]{"dir"});
-            loadFile(snk);
+            loadFile(snk, snk);
         } else if (currentOS.contains("Linux") && snk.endsWith("so")) {
             String linuxPrefix = linuxPrefix(new String[]{"/bin/bash", "-c", "cat /etc/*-release"});
-            loadFile(linuxPrefix + "-" + snk);
+            loadFile(linuxPrefix + "-" + snk, snk);
         } else {
             logger.info("NativeLibLoader : not supported " + currentOS);
         }
@@ -57,10 +57,10 @@ public class NativeLibLoader {
         return "centos";
     }
 
-    public static void loadFile(String snk) {
-        String src = "classpath:" + snk;
+    public static void loadFile(String src, String snk) {
+        String srcAndPath = "classpath:" + src;
         try {
-            File file = copyResourceToTempDirFile(src, snk);
+            File file = copyResourceToTempDirFile(srcAndPath, snk);
             String filePath = file.getAbsolutePath();
             System.load(filePath);
             logger.info("NativeLibLoader : load " + filePath + " successful");
