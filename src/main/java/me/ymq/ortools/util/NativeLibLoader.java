@@ -11,18 +11,57 @@ import java.io.*;
 public class NativeLibLoader {
     private static final Logger logger = LoggerFactory.getLogger(NativeLibLoader.class);
 
-    public static void load(String src, String snk) {
+    public static void load(String snk) {
         String currentOS = System.getProperty("os.name");
+
         if (currentOS.contains("Windows") && snk.endsWith("dll")) {
-            loadFile(src, snk);
+            loadFile(snk);
         } else if (currentOS.contains("Linux") && snk.endsWith("so")) {
-            loadFile(src, snk);
+            String linuxPrefix = linuxPrefix();
+            loadFile(linuxPrefix + "-" + snk);
         } else {
             logger.info("NativeLibLoader : not supported " + currentOS);
         }
     }
 
-    public static void loadFile(String src, String snk) {
+    private static String linuxPrefix() {
+        Runtime run = Runtime.getRuntime();
+        String cmd = "cat /etc/*-release";
+        StringBuilder sb = new StringBuilder();
+        try {
+            // 启动另一个进程来执行命令
+            Process p = run.exec(cmd);
+            BufferedInputStream in = new BufferedInputStream(p.getInputStream());
+            BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
+            String lineStr;
+            //获得命令执行后在控制台的输出信息
+            while ((lineStr = inBr.readLine()) != null) {
+                // 打印输出信息
+                logger.info(lineStr);
+                sb.append(lineStr);
+            }
+            //检查命令是否执行失败。
+            if (p.waitFor() != 0) {
+                //p.exitValue()==0表示正常结束，1：非正常结束
+                if (p.exitValue() == 1) {
+                    logger.error("命令执行失败!");
+                }
+            }
+            inBr.close();
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String releaseInfo = sb.toString();
+        if (releaseInfo.contains("Debian")) {
+            return "debian";
+        }
+        return "centos";
+    }
+
+    public static void loadFile(String snk) {
+        String src = "classpath:" + snk;
         try {
             File file = copyResourceToTempDirFile(src, snk);
             String filePath = file.getAbsolutePath();

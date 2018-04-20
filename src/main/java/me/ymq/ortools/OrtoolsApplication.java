@@ -8,9 +8,9 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 @SpringBootApplication
 public class OrtoolsApplication extends SpringBootServletInitializer {
     static {
-        NativeLibLoader.load("classpath:jniortools.dll", "jniortools.dll");
-        NativeLibLoader.load("classpath:libortools.so", "libortools.so");
-        NativeLibLoader.load("classpath:libjniortools.so", "libjniortools.so");
+        NativeLibLoader.load("jniortools.dll");
+        NativeLibLoader.load("libortools.so");
+        NativeLibLoader.load("libjniortools.so");
     }
 
     public static void main(String[] args) {
